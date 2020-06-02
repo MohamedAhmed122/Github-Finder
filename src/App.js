@@ -1,17 +1,28 @@
-import React from "react";
+import React, { Fragment } from "react";
 import "./App.css";
 import axios from "axios";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+
 import User from "./Component/Users/Users.component";
 import Search from './Component/SearhForm/SearchForm'
 import Navbar from "./Component/NavBar/NavBar.component";
+import Alert from './Component/Alert/Alertt'
+
+import AbotPage from './Pages/About/AboutPage'
 
 class App extends React.Component {
   state = {
     users: [],
     loading: false,
-    showCase:true
+    showCase:true,
+    alert: null
   };
 
+  //     fetch the data
   async componentDidMount() {
     this.setState({
       loading: true
@@ -23,6 +34,9 @@ class App extends React.Component {
       loading: false,
     });
   }
+
+
+  //      search users
   searchUser = async query => {
     console.log(query);
     this.setState({
@@ -36,6 +50,9 @@ class App extends React.Component {
       showCase: false
     });
   }
+
+
+  ///     clear users
   clearUsers = async() =>{
     const response = await axios(`https://api.github.com/users?client_id=${process.env.CLIENT_ID }&client_secret=${process.env.CLIENT_SECRET}`);
     this.setState({
@@ -44,13 +61,37 @@ class App extends React.Component {
       showCase:true
     });
   }
+  
+
+  //     Alert
+  setAlert = (msg,type)=>{
+    this.setState({alert: { msg, type }})
+    setTimeout(() => {
+      this.setState({alert: null, loading:false})
+    }, 2000);
+  }
+  
   render() {
     return (
-      <div className="App">
+     <Router>
+        <div className="App">
         <Navbar />
-        <Search clearUsers={this.clearUsers} searchUser={this.searchUser} showCase={this.state.showCase}/>
-        <User users={this.state.users} loading={this.state.loading} />
-    </div> 
+        <Switch>
+          <Route
+          exact
+          path='/'
+          render={() =>(
+            <Fragment>
+                <Search setAlert={this.setAlert} clearUsers={this.clearUsers} searchUser={this.searchUser} showCase={this.state.showCase}/>
+                <Alert alert={this.state.alert} />
+                <User users={this.state.users} loading={this.state.loading} />
+            </Fragment>
+          )}
+          />
+          <Route path='/about' component={AbotPage}/>
+        </Switch>
+       </div> 
+     </Router>
     );
   }
 }

@@ -6,12 +6,16 @@ class SearchForm extends Component {
   };
   handleSumbit = (event) => {
     event.preventDefault();
+    if(this.state.search === ''){
+        this.props.setAlert('Please, enter text in the search bar', 'light');
+    }
     // how to pass props to the the Appjs
     this.props.searchUser(this.state.search);
-    this.setState({});
+    this.setState({search: ''});
   };
   handleChange = (event) => {
     this.setState({ search: event.target.value });
+    
   };
   render() {
     const { showCase, clearUsers } = this.props;
