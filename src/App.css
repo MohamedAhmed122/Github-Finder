@@ -252,6 +252,9 @@ img {
   background: var(--primary-color);
   color: #fff;
 }
+.badge-primary2{
+background-color: rgb(86, 185, 247);
+}
 
 .btn-light,
 .bg-light,
@@ -267,6 +270,12 @@ img {
 .alert-dark {
   background: var(--dark-color);
   color: #fff;
+}
+.btn-dos{
+  background-color: #fff;
+  color: var(--primary-color);
+  padding: 9px;
+  border: 0.1px solid black;
 }
 
 .btn-danger,

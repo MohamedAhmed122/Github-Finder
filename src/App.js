@@ -1,4 +1,6 @@
-import React, { Fragment } from "react";
+import React, {
+  Fragment
+} from "react";
 import "./App.css";
 import axios from "axios";
 import {
@@ -7,10 +9,11 @@ import {
   Route
 } from "react-router-dom";
 
-import User from "./Component/Users/Users.component";
+import Users from "./Component/Users/Users.component";
 import Search from './Component/SearhForm/SearchForm'
 import Navbar from "./Component/NavBar/NavBar.component";
 import Alert from './Component/Alert/Alertt'
+import GithubUser from './Component/User/User'
 
 import AbotPage from './Pages/About/AboutPage'
 
@@ -18,8 +21,9 @@ class App extends React.Component {
   state = {
     users: [],
     loading: false,
-    showCase:true,
-    alert: null
+    showCase: true,
+    alert: null,
+    user: {}
   };
 
   //     fetch the data
@@ -52,44 +56,87 @@ class App extends React.Component {
   }
 
 
+  //    get Users
+  getUser = async username => {
+    console.log(username);
+    this.setState({
+      loading: true
+    });
+    const response = await axios(`https://api.github.com/users/${username}?client_id=${process.env.CLIENT_ID }&client_secret=${process.env.CLIENT_SECRET}`);
+    console.log(response.data);
+    this.setState({
+      user: response.data,
+      loading: false,
+      showCase: false
+    });
+  }
+
+
+
   ///     clear users
-  clearUsers = async() =>{
+  clearUsers = async () => {
     const response = await axios(`https://api.github.com/users?client_id=${process.env.CLIENT_ID }&client_secret=${process.env.CLIENT_SECRET}`);
     this.setState({
       users: response.data,
       loading: false,
-      showCase:true
+      showCase: true
     });
   }
-  
+
 
   //     Alert
-  setAlert = (msg,type)=>{
-    this.setState({alert: { msg, type }})
+  setAlert = (msg, type) => {
+    this.setState({
+      alert: {
+        msg,
+        type
+      }
+    })
     setTimeout(() => {
-      this.setState({alert: null, loading:false})
+      this.setState({
+        alert: null,
+        loading: false
+      })
     }, 2000);
   }
-  
+
   render() {
+    const {user, users, loading, showCase, alert} = this.state;
     return (
-     <Router>
+      <Router>
         <div className="App">
-        <Navbar />
-        <Switch>
-          <Route
-          exact
-          path='/'
-          render={() =>(
-            <Fragment>
-                <Search setAlert={this.setAlert} clearUsers={this.clearUsers} searchUser={this.searchUser} showCase={this.state.showCase}/>
-                <Alert alert={this.state.alert} />
-                <User users={this.state.users} loading={this.state.loading} />
-            </Fragment>
-          )}
-          />
-          <Route path='/about' component={AbotPage}/>
-        </Switch>
+          <Navbar />
+          <Switch>
+            <Route
+              exact
+              path='/'
+              render={() =>(
+                <Fragment>
+                    <Search
+                      setAlert={this.setAlert} 
+                      clearUsers={this.clearUsers} 
+                      searchUser={this.searchUser} 
+                      showCase={showCase}
+                    />
+                    <Alert alert={alert} />
+                    <Users users={users} loading={loading} />
+                </Fragment>
+              )}
+
+            />
+             <Route path='/about' component={AbotPage}/>
+             <Route 
+                path='/user/:login' 
+                render={props =>(
+                  <GithubUser 
+                    {...props} 
+                    user={user} 
+                    getUser={this.getUser}
+                    loading={loading}
+                  />
+                )}
+             />
+          </Switch>
        </div> 
      </Router>
     );
@@ -97,3 +144,5 @@ class App extends React.Component {
 }
 
 export default App;
+
+//https://api.github.com/users/MohamedAhmed122
