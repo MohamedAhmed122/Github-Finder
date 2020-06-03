@@ -15,11 +15,13 @@ import Navbar from "./Component/NavBar/NavBar.component";
 import Alert from './Component/Alert/Alertt'
 import GithubUser from './Component/User/User'
 
+
 import AbotPage from './Pages/About/AboutPage'
 
 class App extends React.Component {
   state = {
     users: [],
+    repos:[],
     loading: false,
     showCase: true,
     alert: null,
@@ -32,7 +34,7 @@ class App extends React.Component {
       loading: true
     });
     const response = await axios(`https://api.github.com/users?client_id=${process.env.CLIENT_ID }&client_secret=${process.env.CLIENT_SECRET}`);
-    console.log(response.data);
+    // console.log(response.data);
     this.setState({
       users: response.data,
       loading: false,
@@ -42,12 +44,12 @@ class App extends React.Component {
 
   //      search users
   searchUser = async query => {
-    console.log(query);
+    // console.log(query);
     this.setState({
       loading: true
     });
     const response = await axios(`https://api.github.com/search/users?q=${query}&client_id=${process.env.CLIENT_ID }&client_secret=${process.env.CLIENT_SECRET}`);
-    console.log(response.data);
+    // console.log(response.data);
     this.setState({
       users: response.data.items,
       loading: false,
@@ -58,17 +60,35 @@ class App extends React.Component {
 
   //    get Users
   getUser = async username => {
-    console.log(username);
+    // console.log(username);
     this.setState({
       loading: true
     });
     const response = await axios(`https://api.github.com/users/${username}?client_id=${process.env.CLIENT_ID }&client_secret=${process.env.CLIENT_SECRET}`);
-    console.log(response.data);
+    // console.log(response.data);
     this.setState({
       user: response.data,
       loading: false,
       showCase: false
     });
+  }
+
+
+
+  //   get Repos
+
+  gutRepos = async username =>{
+    this.setState({
+      loading: true
+    });
+    const response = await axios(`https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc&client_id=${process.env.CLIENT_ID }&client_secret=${process.env.CLIENT_SECRET}`);
+    console.log(response.data);
+    this.setState({
+      repos: response.data,
+      loading: false,
+      showCase: false
+    });
+    console.log(this.state.repos)
   }
 
 
@@ -101,7 +121,7 @@ class App extends React.Component {
   }
 
   render() {
-    const {user, users, loading, showCase, alert} = this.state;
+    const {user, users, loading, showCase, alert,repos} = this.state;
     return (
       <Router>
         <div className="App">
@@ -127,12 +147,15 @@ class App extends React.Component {
              <Route path='/about' component={AbotPage}/>
              <Route 
                 path='/user/:login' 
+                exact
                 render={props =>(
                   <GithubUser 
                     {...props} 
                     user={user} 
                     getUser={this.getUser}
                     loading={loading}
+                    repos={repos} 
+                    getRepos={this.gutRepos}
                   />
                 )}
              />

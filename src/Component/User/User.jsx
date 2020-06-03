@@ -2,23 +2,24 @@ import React from "react";
 
 import Spinner from "../Spinner/Spinner.compent";
 
+import Repo from '../Repos/Repo'
+
 import { Link } from "react-router-dom";
 
 class User extends React.Component {
   componentDidMount() {
     this.props.getUser(this.props.match.params.login);
+    this.props.getRepos(this.props.match.params.login);
   }
   render() {
     const {
       login,
-      id,
       avatar_url,
       html_url,
       name,
       blog,
       location,
       hireable,
-      email,
       bio,
       public_repos,
       followers,
@@ -98,6 +99,7 @@ class User extends React.Component {
             <div className='badge badge-primary2' >Public Repo:  {public_repos}</div>
             <div className='badge badge-dark' >Public  Gists:  {public_gists}</div>
         </div>
+        <Repo repos={this.props.repos} />
       </div>
     );
   }
