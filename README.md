@@ -66,3 +66,97 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+
+
+### how to create context api
+
+1- create a folder (context) => there will be 3 files 1-For create context 2- for the reducer 3- for the state
+
+
+### create context *Easy one*
+import { createContext } from 'react';
+
+const githubContext = createContext();
+
+export default githubContext;
+
+this all i have to do  *;
+
+### the reducer *the intermediate one
+
+1-create an function and takes to parameters one for state and one for action 
+2- you do switch statement
+3- you siad if the action is " " return " "
+just like that
+const GithubReducer = (state, action)
+{
+    switch(action.type){
+        case SEARCH_USERS:
+                return {
+                    ...state,
+                    users: action.payload,
+                    loading:false
+                }
+                default:
+                    return state;
+    }
+} 
+
+
+### the state *the hard one*
+1- you wanna get all props that you have in App.js here 
+
+2- copy the functions from app.js to the state.js
+
+3- the provider
+
+const GithubState = props => {
+    const initialState = {
+        users: [],
+        user: {},
+        repos: [],
+        loading: false,
+    };
+    const [state, dispatch] = useReducer(GithubReducer, initialState);
+    
+ const searchUsers = async query =>  
+
+    setLoading();
+    const response = await axios(
+        `https://api.github.com/search/users?q=${query}&client_id=${process.env.CLIENT_ID }&client_secret=${process.env.CLIENT_SECRET}`);
+
+    dispatch({
+        type: SEARCH_USERS,
+        payload: response.data.items
+    })
+
+    // setShowCase(false);
+  }
+
+//     //get user
+
+//     // get Repo
+
+//     //clear User
+
+//     // Set Loading
+   const setLoading =()=> dispatch({type: SET_LOADING}) 
+
+
+     return (
+    <GithubContext.Provider
+      value={{
+        users: state.users,
+        user: state.user,
+        repos: state.repos,
+        loading: state.loading,
+        searchUsers,
+      
+      }}
+    >
+      {props.children}
+    </GithubContext.Provider>
+  );
+}

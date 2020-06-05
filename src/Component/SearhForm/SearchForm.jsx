@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import GithubContext from "../../Context/Github/githubContext";
 
-const SearchForm = ({ showCase, clearUsers, setAlert, searchUser }) => {
-  const [ search, setSearch]  = useState("");
+const SearchForm = ({ setAlert }) => {
+  const [search, setSearch] = useState("");
+
+  const githubContext = useContext(GithubContext);
 
   const handleSumbit = (event) => {
     event.preventDefault();
@@ -9,8 +12,8 @@ const SearchForm = ({ showCase, clearUsers, setAlert, searchUser }) => {
       setAlert("Please, enter text in the search bar", "light");
     } else {
       // how to pass props to the the Appjs
-      searchUser(search);
-      setSearch('');
+      githubContext.searchUsers(search);
+      setSearch("");
     }
   };
   const handleChange = (event) => {
@@ -33,8 +36,11 @@ const SearchForm = ({ showCase, clearUsers, setAlert, searchUser }) => {
           className="btn btn-dark btn-block"
         />
       </form>
-      {!showCase ? (
-        <button className="btn btn-light btn-block" onClick={clearUsers}>
+      {githubContext.users.length > 0 ? (
+        <button
+          className="btn btn-light btn-block"
+          onClick={githubContext.clearUsers}
+        >
           Clear
         </button>
       ) : null}

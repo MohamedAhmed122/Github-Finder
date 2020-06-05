@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 
 import Spinner from "../Spinner/Spinner.compent";
 
@@ -6,12 +6,15 @@ import Repo from "../Repos/Repo";
 
 import { Link } from "react-router-dom";
 
+import GithubContext from '../../Context/Github/githubContext'
 
-const User = ({ getUser, getRepos, loading, repos, user, match }) => {
+const User = ({ match }) => {
+
+  const githubContext = useContext(GithubContext)
 
   useEffect(()=>{
-    getUser(match.params.login);
-    getRepos(match.params.login);
+    githubContext.getUser(match.params.login);
+    githubContext.getRepos(match.params.login);
   },[])
 
   // componentDidMount() {
@@ -32,9 +35,9 @@ const User = ({ getUser, getRepos, loading, repos, user, match }) => {
     followers,
     following,
     company,
-    public_gists} = user;
+    public_gists} = githubContext.user;
 
-  if (loading) return <Spinner />;
+  if (githubContext.loading) return <Spinner />;
   return (
     <div className="container" style={{ marginTop: "50px" }}>
       <div className="my-2">
@@ -106,7 +109,7 @@ const User = ({ getUser, getRepos, loading, repos, user, match }) => {
         <div className="badge badge-primary2">Public Repo: {public_repos}</div>
         <div className="badge badge-dark">Public Gists: {public_gists}</div>
       </div>
-      <Repo repos={repos} />
+      <Repo repos={githubContext.repos} />
     </div>
   );
 };
